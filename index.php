@@ -1,102 +1,44 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Tienda de camisetas</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
-</head>
-<body>
-  
-  <div class="container">
+<?php
+//Cargo autoload
+require_once 'autoload.php';
 
-    <!-- CABECERA -->
-    <header id="header">
-      <div id="logo">
-        <img src="assets/img/camiseta.png" alt="camiseta logo">
-        <a href="index.php">
-          Tienda de camisetas
-        </a>
-      </div>
-    </header>  
-
-    <!-- MENU -->
-    <nav id="menu">
-      <ul>
-        <li><a href="#">Inicio</a></li>
-        <li><a href="#">Categoria 1</a></li>
-        <li><a href="#">Categoria 2</a></li>
-        <li><a href="#">Categoria X</a></li>
-      </ul>
-    </nav>
-
-    <!-- Contendio -->
-    <div id="content">
-      <!-- BARRA LATERAL -->
-      <aside id="lateral">
-        <div id="login" class="block_aside">
-          <h3>Entrar a la Web</h3>
-          <form action="#" method="POST">
-            <label for="email">Email:</label>
-            <input type="email" name="email">
-            <label for="password">Password:</label>
-            <input type="password" name="password">
-
-            <input type="submit" value="Enviar">
-          </form>
-
-          
-          <ul>
-            <li><a href="#">Mis pedidos</a></li>
-            <li><a href="#">Gestionar pedidos</a></li>
-            <li><a href="#">Gestionar categorias</a></li>
-          </ul>
-          
-            
-            
-        </div>
+//incluyo las partes de la maquetacion
+require_once 'views/layouts/header.php';
+require_once 'views/layouts/sidebar.php';
 
 
-      </aside>
 
-      <!-- CONTENIDO CENTRAL -->
+//Valido si llega parametro controller por la url
+if(isset($_GET['controller'])){
+  //concateno con el string controller
+  $nombre_controlador = $_GET['controller'].'Controller';
+}else{
+  echo 'La pagina que buscas no existe (err. param. controller)';
+  exit();
+}
 
-      <div id="central">
-        <h1>Productos Destacados</h1>
+//Valido que exista el controlador
+if(class_exists($nombre_controlador)){
+  //Instancio el controlador
+  $controlador = new $nombre_controlador();
 
-        <div class="product"> 
-          <img src="assets/img/camiseta.png" alt="camiseta logo">
-          <h2>Camiseta Azul Ancha</h2>
-          <p>30 Euros</p>
-          <a href="#" class="button">Comprar</a>
-        </div>
+  //Verificamos que exista el parametro action por la url
+  //Y verifcamos que exista como metodo dentro del controller
+  if(isset($_GET['action']) && method_exists($controlador, $_GET['action'])){
+    //guardo el nombre del metodo en una variable
+    $action = $_GET['action'];
 
-        <div class="product"> 
-          <img src="assets/img/camiseta.png" alt="camiseta logo">
-          <h2>Camiseta Azul Ancha</h2>
-          <p>30 Euros</p>
-          <a href="#" class="button">Comprar</a>
-        </div>
+    //llamamos al metodo(action) del objeto creado(controller)
+    $controlador->$action();
+  }else{
+    echo 'La pagina que buscas no existe (err. param. action ó no existe el action)';
+  }
+}else{
+  echo 'La pagina que buscas no existe (No existe el controlador)';
+}
 
-        <div class="product"> 
-          <img src="assets/img/camiseta.png" alt="camiseta logo">
-          <h2>Camiseta Azul Ancha</h2>
-          <p>30 Euros</p>
-          <a href="#" class="button">Comprar</a>
-        </div>
 
-      
-      </div>
+require_once 'views/layouts/footer.php';
 
-    </div>
 
-    
-    <!-- FOOTER -->
-
-    <footer id="footer">
-      <p>Desarrollado por Victor Robles Web &copy <?=date('Y')?></p>
-    </footer>
-  </div>
-</body>
-</html>
+?>
